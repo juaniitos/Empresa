@@ -1,0 +1,324 @@
+﻿@model Factura.ViewModel.CabeceraViewModel
+@{
+    ViewBag.Title = "Cabecera";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row align-items-lg-start">
+        <div class="col">
+            <h2>Factura</h2>
+        </div>
+        <div class="col" style="text-align:end">
+            <div class="row">
+                <div class="col">
+                    <p>Fecha:</p>
+                    <p>Factura #</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" style="text-align:end">
+            <div class="row">
+                <div class="col">
+                    <p>@Model.FechaRegistro</p>
+                    <p>@Model.IdCabecera</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("Cabecera", "Factura", FormMethod.Post, new { @class = "row", action = "/Factura/Cabecera" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+<div class="container">
+
+    <div class="row align-items-lg-start">
+        <div class="col"></div>
+        <div class="col" style="text-align:end">
+            <div class="row"></div>
+            <div class="col">
+                <p>Vence:</p>
+            </div>
+        </div>
+        <div class="col-md-3" style="text-align:end">
+            <div class="row">
+                <div class="col">
+                    <p><input type="date" id="Vencimiento" name="Vencimiento" placeholder="@Model.Vencimiento" /></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row align-items-start">
+        <div class="col">
+            <h6>Factura a</h6>
+            @Html.EditorFor(model => model.NombreCliente, new { htmlAttributes = new { placeholder = "Ingrese su Nombre", @class = "form-control", @id = "NombreCliente" } })
+            @Html.EditorFor(model => model.NombreEmpresa, new { htmlAttributes = new { placeholder = "Ingrese su Nombre de Empresa", @class = "form-control", @id = "NombreEmpresa" } })
+            @Html.EditorFor(model => model.DireccionEmpresa, new { htmlAttributes = new { placeholder = "Ingrese Dirección de Empresa", @class = "form-control", @id = "DireccionEmpresa" } })
+            @Html.EditorFor(model => model.TelEmpresa, new { htmlAttributes = new { placeholder = "Ingrese Telefono de Empresa", @class = "form-control", @id = "TelEmpresa" } })
+        </div>
+        <div class="col">
+            <h6>Enviar a</h6>
+            @Html.EditorFor(model => model.NombreClienteEnvio, new { htmlAttributes = new { placeholder = "Ingrese su Nombre de envio", @class = "form-control", @id = "NombreClienteEnvio" } })
+            @Html.EditorFor(model => model.NombreEmpresaEnvio, new { htmlAttributes = new { placeholder = "Ingrese su Nombre de Empresa Envio", @class = "form-control", @id = "NombreEmpresaEnvio" } })
+            @Html.EditorFor(model => model.DireccionEmpresaEnvio, new { htmlAttributes = new { placeholder = "Ingrese Dirección de Empresa Envio", @class = "form-control", @id = "DireccionEmpresaEnvio" } })
+            @Html.EditorFor(model => model.TelEmpresaEnvio, new { htmlAttributes = new { placeholder = "Ingrese Telefono de Empresa Envio", @class = "form-control", @id = "TelEmpresaEnvio" } })
+        </div>
+    </div>
+</div>
+    <table class="table-bordered text-center">
+        <thead>
+            <tr>
+                <th>Vendedor</th>
+                <th>Orden de Compra</th>
+                <th>Enviar por</th>
+                <th>Términos y condiciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Html.EditorFor(model => model.NombreVendedor, new { htmlAttributes = new { placeholder = "Ingrese Nombre de Vendedor", @class = "form-control", @id = "NombreVendedor" } })</td>
+                <td>@Html.EditorFor(model => model.OrdenCompra, new { htmlAttributes = new { placeholder = "Ingrese No. Orden de Compra", @class = "form-control", @id = "OrdenCompra" } })</td>
+                <td>@Html.EditorFor(model => model.EnviarPor, new { htmlAttributes = new { placeholder = "Ingrese Método de Envío", @class = "form-control", @id = "EnviarPor" } })</td>
+                <td>@Html.EditorFor(model => model.TerminosCondiciones, new { htmlAttributes = new { placeholder = "Ingrese Forma de Pago", @class = "form-control", @id = "TerminosCondiciones" } })</td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-hover table-sm text-center" id="tabla-detalle">
+        <thead>
+            <tr class="text-center">
+                <th scope="col">Código</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="text-center">
+                <td scope="col">
+                    <select id="producto" name="Detalles[0].CodigoProducto" class="form-control producto">
+                        <option value="">Seleccione un producto</option>
+                        @foreach (var producto in ViewBag.Productos)
+                        {
+                            <option value="@producto.CodigoProducto">@producto.CodigoProducto</option>
+                        }
+                    </select>
+                </td>
+                <td scope="col"><input id="descripcion" name="Detalles[0].DescripcionProducto" placeholder="" type="text" class="form-control descripcion" readonly /></td>
+                <td scope="col"><input id="cantidad" name="Detalles[0].Cantidad" placeholder="0" type="number" class="form-control cantidad" /></td>
+                <td scope="col"><input id="precio" name="Detalles[0].PrecioUnitario" placeholder="0" type="number" class="form-control precio" readonly /></td>
+                <td scope="col"><input id="total" name="Detalles[0].Total" placeholder="0" type="number" class="form-control total" readonly /></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="col">
+        <button type="button" id="agregarfila" class="btn btn-danger">Nueva fila</button>
+        <input type="submit" id="crear" class="btn btn-primary" placeholder="Crear Factura" />
+        <h6>Total</h6>
+        <input type="text" id="totalFactura" placeholder="0" class="form-control" readonly />
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+            // Función para calcular el total de una fila
+            function calcularTotalFila(fila) {
+                var cantidad = fila.find(".cantidad").val() || 0;
+                var precio = fila.find(".precio").val() || 0;
+                var total = cantidad * precio;
+                //console.log("TOTAL", total);
+                if (isNaN(total)) {
+                    fila.find(".total").val(total);
+                    return total;
+                    //console.log("TOTALLLL", total);
+                } else {
+                    fila.find(".total").val(total);
+                    return total;
+                    //console.log("TOTALLLL", total);
+                }
+                return 0;
+            }
+
+            // Manejar el evento de cambio en la cantidad
+            $("#tabla-detalle").on("change", ".cantidad", function () {
+                //console.log("CAMBIO");
+                calcularTotalFila($(this).closest("tr"));
+                actualizarTotalFactura();
+            });
+
+            // Manejar el evento de cambio en la selección de producto
+            $("#tabla-detalle").on("change", ".producto", function () {
+                var id = $(this).val();
+                var fila = $(this).closest("tr");
+
+                $.get("/Factura/GetProduct/", { idProducto: id },
+                    function (data) {
+                        var descripcionElement = fila.find(".descripcion");
+                        var precioElement = fila.find(".precio");
+                        var totalElement = fila.find(".total");
+
+                        descripcionElement.empty();
+                        descripcionElement.append($('<option>', {
+                            value: '',
+                            text: 'Seleccione una descripción'
+                        }));
+
+                        $.each(data, function (index, row) {
+                            if (row && row.DescripcionProducto) {
+                                descripcionElement.append($('<option>', {
+                                    value: row.DescripcionProducto,
+                                    text: row.DescripcionProducto
+                                }));
+                                precioElement.val(row.PrecioUnitario);
+                            }
+                            descripcionElement.val(data.DescripcionProducto);
+                            var total = calcularTotalFila(fila);
+                            totalElement.val(total);
+                            console.log("TOTAL", total);
+                        });
+
+                        if (data && data.PrecioUnitario !== null) {
+                            precioElement.val(data.PrecioUnitario);
+                            totalElement.val(calcularTotalFila(fila));
+                        }
+
+                        actualizarTotalFactura();
+                    });
+            });
+            // Manejar el clic en el botón "Nueva fila"
+            $("#agregarfila").click(function () {
+                // Clonar la primera fila de la tabla
+                var filaClonada = $("#tabla-detalle tbody tr:first").clone();
+
+                filaClonada.find("input").each(function () {
+                    var nombreCampoOriginal = $(this).attr('name');
+                    if (nombreCampoOriginal) {
+                        var nuevoNombreCampo = incrementarIndiceEnNombreCampo(nombreCampoOriginal);
+                        $(this).attr('name', nuevoNombreCampo);
+                    }
+                });
+
+                filaClonada.find("select").each(function () {
+                    var nombreCampoOriginal = $(this).attr('name');
+                    if (nombreCampoOriginal) {
+                        var nuevoNombreCampo = incrementarIndiceEnNombreCampo(nombreCampoOriginal);
+                        $(this).attr('name', nuevoNombreCampo);
+                    }
+                });
+
+                // Limpiar los valores existentes en la fila clonada
+                filaClonada.find("input[type='text']").val("");
+                filaClonada.find("input[type='number']").val("0");
+
+                // Agregar la fila clonada a la tabla
+                $("#tabla-detalle tbody").append(filaClonada);
+
+                // Actualizar el número de filas clonadas
+                actualizarNumerosFilas();
+            });
+
+            // Función para actualizar el número de filas (puedes usarlo para establecer IDs únicos si es necesario)
+            function actualizarNumerosFilas() {
+                $("#tabla-detalle tbody tr").each(function (index) {
+                    $(this).find(".numero-fila").text(index + 1);
+                });
+            }
+
+            // Incrementar indice en nombre de campo
+            function incrementarIndiceEnNombreCampo(nombreCampo) {
+                var regex = /\[(\d+)\]/;  // Busca un índice entre corchetes, por ejemplo, [0]
+                var coincidencia = regex.exec(nombreCampo);
+
+                if (coincidencia) {
+                    var indice = parseInt(coincidencia[1]);
+                    var nuevoIndice = indice + 1;
+                    console.log(indice, nuevoIndice);
+                    return nombreCampo.replace(regex, '[' + nuevoIndice + ']');
+                }
+                console.log("CAMPO:", nombreCampo);
+                return nombreCampo;
+            }
+
+            // Función para actualizar el campo totalFactura
+            function actualizarTotalFactura() {
+                var totalDocumento = 0;
+                $("#tabla-detalle tbody tr").each(function () {
+                    totalDocumento += parseFloat($(this).find(".total").val()) || 0;
+                });
+                $("#totalFactura").val(totalDocumento.toFixed(2)); // Formatear el total a dos decimales
+            }
+
+            // Manejar el evento de entrada en cantidad y precio
+            $("#tabla-detalle").on("input", ".cantidad, .precio", function () {
+                actualizarTotalFactura();
+            });
+
+            //Manejar el evento de click en el botón "Crear Factura"
+            $("#crear").click(function (e) {
+                e.preventDefault();
+                if (validarCampos()) {
+                    //Si todos los campos están llenos, se envía
+                    $("form").submit();
+                } else {
+                    //Si no se pasan las validaciones, muestra mensaje de error
+                    alert("Por favor, llene todos los campos antes de crear el documento");
+                }
+            });
+
+            //Función para validar los campos
+            function validarCampos() {
+                var camposLlenos = true;
+
+                //Validar los campos en la tabla de detalles
+                $("#tabla-detalle tbody tr").each(function () {
+                    var fila = $(this);
+                    var producto = fila.find(".producto").val();
+                    var descripcion = fila.find(".descripcion").val();
+                    var cantidad = fila.find(".cantidad").val();
+                    var precio = fila.find(".precio").val();
+                    var total = fila.find(".total").val();
+
+                    if (!producto || !descripcion || cantidad === "0" || precio === "0" || total === "0") {
+                        camposLlenos = false;
+                        return false;  // Rompe el bucle si se encuentra un campo vacío o con valor cero
+                    }
+                });
+
+                //Validar los campos en la cabecera
+                var nombreCliente = $("#NombreCliente").val();
+                var nombreEmpresa = $("#NombreEmpresa").val();
+                var direccionEmpresa = $("#DireccionEmpresa").val();
+                var telEmpresa = $("#TelEmpresa").val();
+                var nombreClienteEnvio = $("#NombreClienteEnvio").val();
+                var nombreEmpresaEnvio = $("#NombreEmpresaEnvio").val();
+                var direccionEmpresaEnvio = $("#DireccionEmpresaEnvio").val();
+                var telEmpresaEnvio = $("#TelEmpresaEnvio").val();
+                var nombreVendedor = $("#NombreVendedor").val();
+                var ordenCompra = $("#OrdenCompra").val();
+                var enviarPor = $("#EnviarPor").val();
+                var terminosCondiciones = $("#TerminosCondiciones").val();
+                var vencimiento = $("#Vencimiento").val();
+
+                if (!nombreCliente || !nombreEmpresa || !direccionEmpresa || !telEmpresa || !nombreClienteEnvio ||
+                    !nombreEmpresaEnvio || !direccionEmpresaEnvio || !telEmpresaEnvio || !nombreVendedor || !ordenCompra ||
+                    !enviarPor || !terminosCondiciones || !vencimiento) {
+                    camposLlenos = false;
+                }
+
+                return camposLlenos;
+            }
+
+        });
+
+    </script>
+
+
+
+}
